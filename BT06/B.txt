@@ -1,0 +1,12 @@
+1. Khong
+2. Khong
+3. Tuy truong hop
+4. Lap vo tan, tran bo nho
+5. 6543210
+6. Segmentation fault
+    Sua lai
+    long factorial(int n) {
+        if (n <= 1) return 1;
+        long temp = factorial(n-1) * n;
+        return temp;
+    }
