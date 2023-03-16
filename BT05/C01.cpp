@@ -1,65 +1,135 @@
 #include <iostream>
 #include <ctime>
+#include <cstdlib>
 using namespace std;
+
+class Game {
+private:
+    int rows, cols, mines;
+    bool **mine;
+    char **board;
+public:
+    void init(int m, int n, int k);
+    void render();
+    void update();
+    void over();
+};
 
 int main()
 {
-    int m, n, k;
-    cin >> m >> n >> k;
+    Game game;
     srand(time(NULL));
-    bool mine[m][n];
-    int tmp = 0;
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            mine[i][j] = rand() % 2;
-            if (mine[i][j] == 1) tmp++;
-            if (tmp > k) mine[i][j] == 0;                    
-        }
-    }
-    char map[m][n];
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            map[i][j] = '*';
-        }
-    }
-    bool lose = false;
-    int choose = 0;
-    while (!lose && choose != (m * n - k)){
-        int x, y;
-        cin >> x >> y;
-        choose++;
-        if (mine[x][y] == true) {
-            lose = true;
-            break;
-        }
-        else {
-            int count = 0;
-            for (int i = x - 1; i <= x + 1; i++) {
-                for (int j = y - 1; j <= y + 1; j++) {
-                    if (i == x && j == y) continue;
-                    if (mine[i][j] == true) count++;
-                }
-            }
-            map[x][y] = count + '0';
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    cout << map[i][j] << " ";
-                }
-                cout << endl;
-            }
-        }
-    }
-    if (lose == true){
-        cout << "YOU'RE DEAD" << endl;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (mine[i][j] == true) cout << "X ";
-                else cout << map[i][j] << " ";
-            }
-            cout << endl;
-        }
-    }
-    else cout << "YOU WIN" << endl;
 
-    return 0;
+    int m, n, k;
+    std::cin >> m >> n >> k;
+    game.init(m, n, k);
+
+    while (true)
+    {
+        game.render();
+        game.update();
+    }
+}
+
+void Game::init(int m, int n, int k){
+    rows = m;
+    cols = n;
+    mines = k;
+
+    board = new char*[m];
+    for (int i = 0; i < m; i++)
+    {
+        board[i] = new char[n];
+        for (int j = 0; j < n; j++)
+        {   
+            board[i][j] = '*';
+        }
+    }
+
+    mine = new bool*[m];
+    for (int i = 0; i < m; i++)
+    {
+        mine[i] = new bool[n];
+        for (int j = 0; j < n; j++)
+        {   
+            mine[i][j] = false;
+        }
+    }
+    
+    int numberOfMine = k;
+    while (numberOfMine > 0)
+    {
+        int x = rand() % m;
+        int y = rand() % n;
+
+        if (mine[x][y] == false) {
+            mine[x][y] = true;
+            numberOfMine--;
+        }
+    }
+}
+
+void Game::render() {
+    system("cls");
+    std::cout << "+";
+    for (int j = 0; j < cols; j++)
+    {
+        std::cout << "--";
+    }
+    std::cout << "+\n";
+
+    for (int i = 0; i < rows; i++)
+    {
+        std::cout << "|";
+        for (int j = 0; j < cols; j++)
+        {
+            std::cout << board[i][j];
+            std::cout << ' ';
+        }
+        std::cout << "|\n";
+    }
+
+    std::cout << "+";
+    for (int j = 0; j < cols; j++)
+    {
+        std::cout << "--";
+    }
+    std::cout << "+\n";
+}
+
+void Game::update() {
+    int x, y;
+    std::cin >> x >> y;
+    x--;
+    y--;
+    if (mine[x][y] == true) {
+        over();
+    }
+    else {
+        int value = 0;
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                if (x + i >= 0 && x + i < rows && y + j >= 0 && y + j < cols)
+                {
+                    if (mine[x + i][y + j] == true) value++;
+                }
+            }
+        }
+        board[x][y] = value + '0';
+    }
+}
+
+void Game::over() {
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            if (mine[i][j] == true) board[i][j] = 'X';
+        }
+    }
+    render();
+    std::cout <<"YOU'RE DEAD!\n";
+    exit(0);
 }
