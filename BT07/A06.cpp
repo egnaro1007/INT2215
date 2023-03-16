@@ -15,13 +15,16 @@ public:
     void over();
 };
 
-int main()
+int main(int argc, const char * argv[])
 {
     Game game;
     srand(time(NULL));
 
     int m, n, k;
-    std::cin >> m >> n >> k;
+    m = atoi(argv[1]);
+    n = atoi(argv[2]);
+    k = atoi(argv[3]);
+    
     game.init(m, n, k);
 
     while (true)
