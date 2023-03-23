@@ -20,3 +20,17 @@ A02
 A03
     Để swap 2 con trỏ, ta cần phải truyền vào hàm swap còn trỏ trỏ đến con trỏ đó. Cụ thể:
         void swap_pointers(char* &x, char* &y);
+A04
+    1. s là con trỏ trỏ đến con trỏ nhưng chưa được khai báo bộ nhớ.
+    2. 
+        int main() {
+            char* s; // Changed to a single pointer
+            char foo[] = "Hello World";
+            s = foo;
+            std::cout << "s is " << s << std::endl;
+
+            s = foo; // Không cần phải s[0];
+            std::cout << "s is " << s << std::endl;
+
+            return 0;
+        }
